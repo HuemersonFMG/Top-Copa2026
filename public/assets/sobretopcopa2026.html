@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Sobre - Top Copa 2026</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+    min-height:100vh;
+    background:linear-gradient(135deg,#8b0000,#d71920,#ff8c00,#ffd000);
+    color:#fff;
+    padding:20px;
+}
+
+.container{
+    max-width:1100px;
+    margin:auto;
+}
+
+.header{
+    text-align:center;
+    padding:30px 20px;
+    border:3px solid #ffd000;
+    border-radius:22px;
+    background:rgba(120,0,0,.78);
+    box-shadow:0 0 25px rgba(255,208,0,.55);
+    margin-bottom:25px;
+}
+
+.header h1{
+    font-size:36px;
+    margin-bottom:10px;
+}
+
+.header span{
+    color:#ffd000;
+}
+
+.header p{
+    color:#fff5c0;
+    font-size:17px;
+}
+
+.card{
+    background:rgba(255,255,255,.12);
+    border:2px solid #ffd000;
+    border-radius:20px;
+    padding:25px;
+    margin-bottom:22px;
+    box-shadow:0 8px 20px rgba(0,0,0,.18);
+}
+
+.card h2{
+    color:#ffd000;
+    margin-bottom:15px;
+    font-size:26px;
+}
+
+.card h3{
+    color:#2a38f8;
+    margin-bottom:15px;
+    font-size:26px;
+}
+
+.card p{
+    font-size:17px;
+    line-height:1.7;
+    color:#fff;
+    margin-bottom:12px;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:18px;
+}
+
+.info-box{
+    background:#fff;
+    color:#333;
+    border-radius:16px;
+    padding:20px;
+    text-align:center;
+}
+
+.info-box h3{
+    color:#b00000;
+    margin-bottom:8px;
+    font-size:20px;
+}
+
+.info-box p{
+    color:#444;
+    font-size:15px;
+}
+
+.badge{
+    display:inline-block;
+    margin:5px;
+    padding:8px 12px;
+    border-radius:20px;
+    background:#ffd000;
+    color:#7a0000;
+    font-weight:bold;
+    font-size:14px;
+}
+
+.autor{
+    text-align:center;
+}
+
+.autor strong{
+    color:#ffd000;
+}
+
+.btn-voltar{
+    display:inline-block;
+    margin-top:15px;
+    padding:12px 20px;
+    border-radius:12px;
+    background:#ffd000;
+    color:#7a0000;
+    text-decoration:none;
+    font-weight:bold;
+    transition:.2s;
+}
+
+.btn-voltar:hover{
+    background:#fff3a0;
+    transform:translateY(-2px);
+}
+
+.footer{
+    text-align:center;
+    color:#fff5c0;
+    margin-top:25px;
+    font-size:14px;
+}
+
+@media(max-width:900px){
+    body{
+        padding:12px;
+    }
+
+    .header h1{
+        font-size:26px;
+    }
+
+    .grid{
+        grid-template-columns:1fr;
+    }
+
+    .card{
+        padding:18px;
+    }
+
+    .card h2{
+        font-size:22px;
+    }
+
+    .card p{
+        font-size:15px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <header class="header">
+        <h1>Sobre o <span>Top Copa 2026</span></h1>
+        <p>Projeto web para acompanhamento da Copa do Mundo FIFA 2026.</p>
+    </header>
+
+    <section class="card">
+        <h2>🏆 Visão Geral</h2>
+        <h3>
+            <p>Projeto Estácio - Aplicando conhecimentos do Curso</p>
+            <p>Api Copa 2026 densenvolvida para a empresa Top Cestas de Alimentos - Cortesia.</p>
+        </h3>
+        <p>
+            O <strong>Top Copa 2026</strong> é um site desenvolvido para acompanhar os jogos,
+            placares e classificação da Copa do Mundo FIFA 2026 de forma simples, visual e responsiva.
+        </p>
+        <p>
+            A aplicação exibe os grupos da competição, os jogos de cada seleção, o próximo jogo do Brasil
+            e os resultados atualizados automaticamente através de uma API esportiva externa.
+        </p>
+    </section>
+
+    <section class="card">
+        <h2>⚽ Principais Funcionalidades</h2>
+
+        <div class="grid">
+            <div class="info-box">
+                <h3>Classificação</h3>
+                <p>Tabelas completas dos grupos com pontos, jogos, vitórias, empates, derrotas e saldo de gols.</p>
+            </div>
+
+            <div class="info-box">
+                <h3>Jogos</h3>
+                <p>Lista de partidas com data, horário, seleções, bandeiras, placar e status do jogo.</p>
+            </div>
+
+            <div class="info-box">
+                <h3>Brasil</h3>
+                <p>Destaque especial para o próximo jogo da Seleção Brasileira e acompanhamento da campanha.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="card">
+        <h2>🔄 Atualização Automática</h2>
+        <p>
+            O servidor consulta periodicamente a API <strong>Football-Data.org</strong>,
+            processa as informações dos jogos e grava os dados em cache local.
+        </p>
+        <p>
+            Dessa forma, o site permanece rápido, evita excesso de chamadas externas e mantém os placares
+            atualizados durante a competição.
+        </p>
+
+        <span class="badge">Node.js</span>
+        <span class="badge">Express</span>
+        <span class="badge">Football-Data.org</span>
+        <span class="badge">PM2</span>
+        <span class="badge">Cloudflare Tunnel</span>
+    </section>
+
+    <section class="card">
+        <h2>🛠 Tecnologias Utilizadas</h2>
+        <p>
+            O projeto foi desenvolvido com HTML5, CSS3, JavaScript, Node.js e Express.
+            Em produção, a aplicação roda com PM2 e é publicada por meio do Cloudflare Tunnel.
+        </p>
+    </section>
+
+    <section class="card autor">
+        <h2>🔐 Licença</h2>
+        <p>Projeto desenvolvido para fins de estudo - atividade extracurricular Faculdade Estácio de Sá, demonstração técnica e acompanhamento da Copa do Mundo FIFA 2026.</p>
+
+        <p>O uso da API Football-Data.org está sujeito aos termos de utilização do respectivo fornecedor.</p>
+    </section>
+
+    <section class="card autor">
+        <h2>👨‍💻 Autor</h2>
+        <p>
+            Projeto desenvolvido por <strong>Huemerson Leonardo Garcia</strong>.
+        </p>
+        <p>
+            GitHub:  <a href="https://github.com/HuemersonFMG"><strong>@HuemersonFMG</strong></a>
+        </p>
+
+        <a href="Copa2026.html" class="btn-voltar">Voltar para a Copa</a>
+    </section>
+
+    <footer class="footer">
+        Top Copa 2026 - Top Cestas
+    </footer>
+
+</div>
+
+</body>
+</html>

@@ -406,6 +406,94 @@ body{
     font-size:14px;
 }
 
+/* ==========================================
+   Botões do Cabeçalho
+========================================== */
+
+.acoes-copa{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:15px;
+    margin-top:18px;
+    flex-wrap:wrap;
+}
+
+.btn-top{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+
+    padding:12px 22px;
+
+    background:linear-gradient(#ffd700,#f5b700);
+    color:#8b0000;
+
+    border:2px solid #fff5a0;
+    border-radius:10px;
+
+    text-decoration:none;
+
+    font-size:16px;
+    font-weight:bold;
+
+    cursor:pointer;
+
+    transition:.25s;
+
+    box-shadow:
+        0 4px 12px rgba(0,0,0,.35),
+        inset 0 1px 0 rgba(255,255,255,.4);
+}
+
+.btn-top:hover{
+
+    transform:translateY(-3px);
+
+    background:linear-gradient(#ffe56d,#ffd000);
+
+    box-shadow:
+        0 8px 20px rgba(255,215,0,.55);
+
+}
+
+.btn-top:active{
+
+    transform:translateY(1px);
+
+}
+
+.btn-atualizar{
+
+    min-width:190px;
+
+}
+
+.btn-sobre{
+
+    min-width:170px;
+
+}
+
+/* Mobile */
+
+@media(max-width:700px){
+
+    .acoes-copa{
+
+        flex-direction:column;
+
+    }
+
+    .btn-top{
+
+        width:240px;
+
+    }
+
+}
+
 /* RESPONSIVO */
 
 @media(max-width:1100px){

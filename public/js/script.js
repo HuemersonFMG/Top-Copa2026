@@ -25,48 +25,121 @@ async function iniciarPagina() {
 function configurarEventos() {
     const botaoAtualizar = document.getElementById("btnAtualizarCopa");
 
-    if (!botaoAtualizar) return;
+    if (!botaoAtualizar) {
+        console.warn("Botão #btnAtualizarCopa não encontrado.");
+        return;
+    }
 
-    botaoAtualizar.addEventListener("click", async () => {
-        botaoAtualizar.disabled = true;
-        botaoAtualizar.innerHTML = "⏳ Atualizando...";
+    botaoAtualizar.addEventListener("click", atualizarCopaAgora);
+}
 
-        try {
-            await atualizarDadosExternos();
-            await carregarDadosCopa();
-        } catch (erro) {
-            console.error("Erro ao atualizar manualmente:", erro);
-            alert("Não foi possível atualizar os dados agora.");
-        } finally {
-            botaoAtualizar.disabled = false;
-            botaoAtualizar.innerHTML = "🔄 Atualizar agora";
+async function atualizarCopaAgora() {
+    const botaoAtualizar = document.getElementById("btnAtualizarCopa");
+
+    try {
+        alterarEstadoBotao(botaoAtualizar, true, "⏳ Atualizando...");
+
+        const retorno = await atualizarDadosExternos();
+
+        if (!atualizacaoFoiBemSucedida(retorno)) {
+            const mensagem = retorno?.mensagem || retorno?.erro || "A API não confirmou a atualização.";
+            throw new Error(mensagem);
         }
-    });
+
+        if (retorno.dados && Array.isArray(retorno.dados.grupos)) {
+            dadosCopa = retorno.dados;
+
+            montarTabelaCopa(dadosCopa.grupos);
+            atualizarDataAtualizacao(dadosCopa.atualizadoEm || retorno.atualizadoEm);
+            atualizarProgressoBrasil(dadosCopa.grupos);
+            atualizarProximoJogoBrasil(dadosCopa.grupos);
+        } else {
+            await carregarDadosCopa();
+        }
+
+    } catch (erro) {
+        console.error("Erro ao atualizar manualmente:", erro);
+        alert("Não foi possível atualizar os dados agora.");
+    } finally {
+        alterarEstadoBotao(botaoAtualizar, false, "🔄 Atualizar agora");
+    }
+}
+
+function alterarEstadoBotao(botao, desabilitado, texto) {
+    if (!botao) return;
+
+    botao.disabled = desabilitado;
+    botao.innerHTML = texto;
+
+    if (desabilitado) {
+        botao.classList.add("carregando");
+    } else {
+        botao.classList.remove("carregando");
+    }
+}
+
+function atualizacaoFoiBemSucedida(retorno) {
+    if (!retorno) return false;
+
+    if (retorno.sucesso === true) return true;
+    if (String(retorno.sucesso).toLowerCase() === "true") return true;
+
+    if (retorno.dados && Array.isArray(retorno.dados.grupos) && retorno.dados.grupos.length > 0) {
+        return true;
+    }
+
+    return false;
 }
 
 async function atualizarDadosExternos() {
     const resposta = await fetch(API_ATUALIZAR, {
-        method: "POST"
+        method: "POST",
+        cache: "no-store",
+        headers: {
+            "Accept": "application/json"
+        }
     });
 
-    if (!resposta.ok) {
-        throw new Error("Erro ao executar atualização manual.");
+    const texto = await resposta.text();
+
+    let retorno = null;
+
+    try {
+        retorno = texto ? JSON.parse(texto) : null;
+    } catch (erro) {
+        throw new Error("Resposta inválida da API de atualização.");
     }
 
-    return await resposta.json();
+    if (!resposta.ok) {
+        throw new Error(retorno?.mensagem || retorno?.erro || "Erro ao executar atualização manual.");
+    }
+
+    return retorno;
 }
 
 async function carregarDadosCopa() {
     try {
         const resposta = await fetch(API_HOME, {
-            cache: "no-store"
+            method: "GET",
+            cache: "no-store",
+            headers: {
+                "Accept": "application/json"
+            }
         });
 
-        if (!resposta.ok) {
-            throw new Error("Erro ao buscar dados da Copa.");
+        const texto = await resposta.text();
+
+        let dados = null;
+
+        try {
+            dados = texto ? JSON.parse(texto) : null;
+        } catch (erro) {
+            throw new Error("Resposta inválida ao buscar dados da Copa.");
         }
 
-        const dados = await resposta.json();
+        if (!resposta.ok) {
+            throw new Error(dados?.mensagem || "Erro ao buscar dados da Copa.");
+        }
 
         if (!dados || !Array.isArray(dados.grupos)) {
             throw new Error("Formato de dados inválido.");
@@ -194,7 +267,12 @@ function obterPlacarJogo(jogo) {
         return `${numeroSeguro(jogo.golsCasa)} x ${numeroSeguro(jogo.golsFora)}`;
     }
 
-    if (jogo.golsCasa !== null && jogo.golsCasa !== undefined && jogo.golsFora !== null && jogo.golsFora !== undefined) {
+    if (
+        jogo.golsCasa !== null &&
+        jogo.golsCasa !== undefined &&
+        jogo.golsFora !== null &&
+        jogo.golsFora !== undefined
+    ) {
         return `${numeroSeguro(jogo.golsCasa)} x ${numeroSeguro(jogo.golsFora)}`;
     }
 
@@ -214,7 +292,7 @@ function atualizarDataAtualizacao(data) {
     const dataFormatada = new Date(data);
 
     if (isNaN(dataFormatada.getTime())) {
-        elemento.innerText = "Última atualização: " + data;
+        elemento.innerText = "Última atualização: " + textoSeguro(data);
         return;
     }
 
@@ -239,9 +317,7 @@ function atualizarProgressoBrasil(grupos) {
     const jogosFinalizados = jogosBrasil.filter(jogo => jogoFinalizado(jogo)).length;
     const percentual = Math.round((jogosFinalizados / jogosBrasil.length) * 100);
 
-    if (txtJogos) {
-        txtJogos.innerText = jogosFinalizados;
-    }
+    if (txtJogos) txtJogos.innerText = jogosFinalizados;
 
     if (barra) {
         barra.style.width = percentual + "%";
@@ -263,6 +339,8 @@ function atualizarProximoJogoBrasil(grupos) {
         pararContador();
         return;
     }
+
+    ordenarJogosPorData(jogosBrasil);
 
     const proximo = jogosBrasil.find(jogo => !jogoFinalizado(jogo));
 
@@ -364,6 +442,18 @@ function obterJogosBrasil(grupos) {
     });
 
     return jogos;
+}
+
+function ordenarJogosPorData(jogos) {
+    jogos.sort((a, b) => {
+        const dataA = obterDataDoJogo(a);
+        const dataB = obterDataDoJogo(b);
+
+        const tempoA = dataA ? dataA.getTime() : 0;
+        const tempoB = dataB ? dataB.getTime() : 0;
+
+        return tempoA - tempoB;
+    });
 }
 
 function jogoFinalizado(jogo) {
