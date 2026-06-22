@@ -360,7 +360,7 @@ Top-Copa2026
 
 # 🔐 Licença
 
-Projeto desenvolvido para fins de estudo, demonstração técnica e acompanhamento da Copa do Mundo FIFA 2026.
+Projeto desenvolvido para fins de estudo - atividade extracurricular Faculdade Estácio de Sá, demonstração técnica e acompanhamento da Copa do Mundo FIFA 2026.
 
 O uso da API Football-Data.org está sujeito aos termos de utilização do respectivo fornecedor.
 
@@ -368,7 +368,7 @@ O uso da API Football-Data.org está sujeito aos termos de utilização do respe
 
 # 👨‍💻 Autor
 
-**Huemerson Ferreira Gonçalves**
+**Huemerson Leonardo Garcia**
 
 GitHub:
 
