@@ -1,5 +1,6 @@
 # 🏆 Top Copa 2026
 
+>Projeto Estácio - Aplicando conhecimentos do Curso - Api Copa 2026 densenvolvida para a emprsa Top Cestas de Alimentos - Cortesia.
 > Sistema web desenvolvido em **Node.js** para acompanhamento da Copa do Mundo FIFA 2026, exibindo classificação dos grupos, jogos, placares em tempo real, próximos confrontos do Brasil e atualização automática através da API Football-Data.org.
 
 ---
