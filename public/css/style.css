@@ -1,0 +1,618 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    min-height:100vh;
+    font-family:Arial, Helvetica, sans-serif;
+    color:#fff;
+    background:
+        radial-gradient(circle at top left, rgba(255,208,0,.35), transparent 30%),
+        linear-gradient(135deg,#7a0000 0%,#d71920 35%,#ff8c00 75%,#ffd000 100%);
+    padding:20px;
+    overflow-x:hidden;
+}
+
+.container{
+    width:100%;
+    max-width:1280px;
+    margin:0 auto;
+}
+
+/* CABEÇALHO */
+
+.header{
+    text-align:center;
+    padding:26px 20px;
+    border:3px solid #ffd000;
+    border-radius:22px;
+    background:linear-gradient(135deg,rgba(95,0,0,.88),rgba(160,0,0,.78));
+    box-shadow:0 10px 30px rgba(0,0,0,.35), 0 0 25px rgba(255,208,0,.45);
+}
+
+.header h1{
+    font-size:36px;
+    line-height:1.15;
+    color:#fff;
+    text-shadow:0 3px 8px rgba(0,0,0,.35);
+}
+
+.header span{
+    color:#ffd000;
+}
+
+.header p{
+    margin-top:8px;
+    color:#fff5c0;
+    font-size:16px;
+}
+
+/* CARD PRÓXIMO JOGO */
+
+.card-proximo{
+    margin-top:25px;
+    padding:18px;
+    border-radius:24px;
+    background:linear-gradient(135deg,rgba(150,0,0,.70),rgba(255,140,0,.45));
+    border:2px solid #ffd000;
+    box-shadow:0 10px 25px rgba(0,0,0,.28);
+}
+
+.proximo-container{
+    display:flex;
+    align-items:center;
+    gap:30px;
+}
+
+.card-gif{
+    width:245px;
+    min-width:245px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.card-gif img{
+    width:100%;
+    height:auto;
+    display:block;
+    border-radius:16px;
+    box-shadow:0 8px 18px rgba(0,0,0,.35);
+}
+
+.card-jogo{
+    flex:1;
+    text-align:center;
+}
+
+.card-jogo h2,
+.card-proximo h2{
+    color:#ffd000;
+    margin-bottom:10px;
+    font-size:28px;
+    text-shadow:0 3px 8px rgba(0,0,0,.35);
+}
+
+#infoProximo{
+    color:#fff;
+    font-size:16px;
+    line-height:1.35;
+}
+
+.placar{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:22px;
+    margin:18px 0;
+    font-size:30px;
+    font-weight:bold;
+}
+
+.time{
+    min-width:145px;
+    font-size:31px;
+    text-align:center;
+}
+
+.gols{
+    min-width:76px;
+    background:#fff;
+    color:#b00000;
+    padding:13px 20px;
+    border-radius:14px;
+    font-size:42px;
+    line-height:1;
+    box-shadow:0 6px 12px rgba(0,0,0,.22);
+}
+
+.versus{
+    font-size:34px;
+    font-weight:bold;
+    color:#fff;
+}
+
+.contador{
+    margin-top:12px;
+    font-size:22px;
+    color:#fff5c0;
+    font-weight:bold;
+}
+
+/* TABELA SIMPLES DOS JOGOS DO BRASIL */
+
+.tabela{
+    width:100%;
+    margin-top:30px;
+    border-collapse:collapse;
+    border-radius:16px;
+    overflow:hidden;
+    background:#fff;
+    color:#333;
+    box-shadow:0 8px 20px rgba(0,0,0,.25);
+}
+
+.tabela th{
+    background:#a00000;
+    color:#ffd000;
+    padding:14px;
+    font-size:15px;
+}
+
+.tabela td{
+    padding:14px;
+    text-align:center;
+    border-bottom:1px solid #eee;
+}
+
+.tabela tr.brasil{
+    background:#fff3c4;
+    font-weight:bold;
+    color:#9b0000;
+}
+
+.status{
+    display:inline-block;
+    padding:6px 10px;
+    border-radius:20px;
+    font-size:13px;
+    font-weight:bold;
+}
+
+.finalizado{
+    background:#008000;
+    color:#fff;
+}
+
+.proximo{
+    background:#ff8c00;
+    color:#fff;
+}
+
+.agendado{
+    background:#d71920;
+    color:#fff;
+}
+
+/* PROGRESSO */
+
+.grupo{
+    margin-top:30px;
+    padding:22px;
+    border-radius:22px;
+    background:linear-gradient(135deg,rgba(95,0,0,.86),rgba(150,20,0,.72));
+    border:2px solid #ffd000;
+    box-shadow:0 10px 25px rgba(0,0,0,.25);
+}
+
+.grupo h2{
+    text-align:center;
+    color:#ffd000;
+    margin-bottom:15px;
+    font-size:24px;
+}
+
+.barra{
+    height:26px;
+    background:#5c0000;
+    border-radius:20px;
+    overflow:hidden;
+    margin-top:15px;
+    border:1px solid rgba(255,208,0,.55);
+}
+
+.progresso{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg,#ffd000,#ff8c00);
+    text-align:center;
+    color:#7a0000;
+    font-weight:bold;
+    line-height:26px;
+    transition:width .4s ease;
+}
+
+/* TABELA COMPLETA DA COPA */
+
+.copa-tabela-section{
+    margin-top:30px;
+    padding:24px;
+    border-radius:24px;
+    background:linear-gradient(135deg,rgba(90,0,0,.92),rgba(150,20,0,.82),rgba(255,120,0,.58));
+    border:2px solid #ffd000;
+    box-shadow:0 12px 30px rgba(0,0,0,.35), 0 0 25px rgba(255,208,0,.25);
+}
+
+.copa-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:15px;
+    margin-bottom:24px;
+}
+
+.copa-header h2{
+    color:#ffd000;
+    margin:0;
+    font-size:28px;
+    line-height:1.2;
+    text-shadow:0 3px 8px rgba(0,0,0,.35);
+}
+
+.copa-header span{
+    font-size:13px;
+    color:#fff5c0;
+    text-align:right;
+}
+
+.grupos-copa{
+    display:grid;
+    grid-template-columns:repeat(3, minmax(0,1fr));
+    gap:18px;
+}
+
+.grupo-card{
+    background:#fff;
+    color:#222;
+    border-radius:18px;
+    overflow:hidden;
+    box-shadow:0 10px 22px rgba(0,0,0,.28);
+    border:1px solid rgba(255,208,0,.45);
+}
+
+.grupo-card h3{
+    background:linear-gradient(90deg,#850000,#c90000,#8f0000);
+    color:#ffd000;
+    padding:13px;
+    margin:0;
+    text-align:center;
+    font-size:18px;
+    letter-spacing:.3px;
+}
+
+.tabela-grupo{
+    width:100%;
+    border-collapse:collapse;
+}
+
+.tabela-grupo th{
+    background:#f4f4f4;
+    color:#9b0000;
+    font-size:12px;
+    padding:8px 6px;
+    border-bottom:1px solid #ddd;
+}
+
+.tabela-grupo td{
+    padding:8px 6px;
+    text-align:center;
+    border-bottom:1px solid #eee;
+    font-size:12px;
+}
+
+.tabela-grupo .nome-time{
+    text-align:left;
+    font-weight:600;
+    white-space:nowrap;
+}
+
+.time-brasil{
+    background:#fff1b8 !important;
+    color:#a00000;
+    font-weight:bold;
+}
+
+.jogos-grupo{
+    background:#fff8dc;
+    padding:10px;
+}
+
+.jogo-linha{
+    display:grid;
+    grid-template-columns:48px 1fr 52px 1fr;
+    align-items:center;
+    gap:8px;
+    padding:7px 0;
+    border-bottom:1px dashed #ddd;
+    font-size:12px;
+    color:#333;
+}
+
+.jogo-linha:last-child{
+    border-bottom:none;
+}
+
+.data-jogo{
+    font-weight:bold;
+    color:#7a0000;
+}
+
+.placar-jogo{
+    font-weight:bold;
+    color:#b00000;
+    text-align:center;
+    background:#fff;
+    border-radius:8px;
+    padding:4px 5px;
+    box-shadow:inset 0 0 0 1px rgba(176,0,0,.12);
+}
+
+.hora-jogo{
+    display:inline-block;
+    margin-left:8px;
+    padding:2px 8px;
+    border-radius:6px;
+    background:#ffd000;
+    color:#7a0000;
+    font-weight:bold;
+    font-size:14px;
+}
+
+.data-jogo{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    font-weight:bold;
+    color:#7a0000;
+}
+
+.data-jogo small{
+    margin-top:2px;
+    font-size:11px;
+    color:#555;
+    font-weight:normal;
+}
+
+.erro-api{
+    color:#fff;
+    text-align:center;
+    padding:20px;
+    background:rgba(0,0,0,.25);
+    border-radius:14px;
+}
+
+/* RODAPÉ */
+
+.footer{
+    text-align:center;
+    margin-top:30px;
+    color:#fff5c0;
+    font-size:14px;
+}
+
+/* RESPONSIVO */
+
+@media(max-width:1100px){
+    .container{
+        max-width:100%;
+    }
+
+    .grupos-copa{
+        grid-template-columns:repeat(2, minmax(0,1fr));
+    }
+
+    .time{
+        min-width:120px;
+        font-size:26px;
+    }
+}
+
+@media(max-width:900px){
+    body{
+        padding:10px;
+    }
+
+    .header{
+        padding:18px 12px;
+        border-radius:18px;
+    }
+
+    .header h1{
+        font-size:24px;
+    }
+
+    .header p{
+        font-size:14px;
+    }
+
+    .card-proximo{
+        margin-top:15px;
+        padding:14px;
+        border-radius:18px;
+    }
+
+    .proximo-container{
+        flex-direction:column;
+        gap:16px;
+    }
+
+    .card-gif{
+        width:100%;
+        min-width:0;
+        max-width:320px;
+    }
+
+    .card-jogo h2,
+    .card-proximo h2{
+        font-size:22px;
+    }
+
+    #infoProximo{
+        font-size:14px;
+    }
+
+    .placar{
+        width:100%;
+        gap:10px;
+        flex-wrap:wrap;
+        margin:15px 0;
+    }
+
+    .time{
+        min-width:100px;
+        font-size:22px;
+    }
+
+    .gols{
+        min-width:64px;
+        padding:10px 16px;
+        font-size:32px;
+        border-radius:10px;
+    }
+
+    .versus{
+        font-size:28px;
+    }
+
+    .contador{
+        font-size:18px;
+        line-height:1.3;
+    }
+
+    .tabela{
+        display:block;
+        overflow-x:auto;
+        white-space:nowrap;
+        border-radius:12px;
+        font-size:13px;
+    }
+
+    .tabela th,
+    .tabela td{
+        padding:10px 8px;
+    }
+
+    .grupo{
+        margin-top:20px;
+        padding:16px;
+        border-radius:18px;
+        font-size:14px;
+    }
+
+    .grupo h2{
+        font-size:20px;
+    }
+
+    .copa-tabela-section{
+        padding:16px;
+        border-radius:18px;
+    }
+
+    .copa-header{
+        flex-direction:column;
+        text-align:center;
+        gap:8px;
+    }
+
+    .copa-header h2{
+        font-size:22px;
+    }
+
+    .copa-header span{
+        text-align:center;
+    }
+
+    .grupos-copa{
+        grid-template-columns:1fr;
+        gap:14px;
+    }
+
+    .grupo-card{
+        border-radius:14px;
+    }
+
+    .tabela-grupo{
+        min-width:100%;
+    }
+
+    .tabela-grupo th,
+    .tabela-grupo td{
+        font-size:12px;
+        padding:7px 5px;
+    }
+
+    .jogo-linha{
+        grid-template-columns:42px 1fr 48px 1fr;
+        gap:5px;
+        font-size:12px;
+    }
+
+    .footer{
+        font-size:12px;
+        margin-top:20px;
+    }
+}
+
+@media(max-width:480px){
+    .header h1{
+        font-size:20px;
+    }
+
+    .placar{
+        display:grid;
+        grid-template-columns:1fr 64px 28px 64px 1fr;
+        gap:6px;
+    }
+
+    .time{
+        min-width:0;
+        font-size:16px;
+    }
+
+    .gols{
+        min-width:58px;
+        width:58px;
+        padding:10px 0;
+        font-size:28px;
+    }
+
+    .versus{
+        font-size:22px;
+    }
+
+    .contador{
+        font-size:16px;
+    }
+
+    .card-gif{
+        max-width:260px;
+    }
+
+    .jogo-linha{
+        grid-template-columns:1fr;
+        text-align:center;
+        gap:4px;
+        padding:9px 0;
+    }
+
+    .placar-jogo{
+        width:70px;
+        margin:0 auto;
+    }
+}

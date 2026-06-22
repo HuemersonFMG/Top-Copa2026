@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Top Cestas - Copa 2026</title>
+<link rel="stylesheet" href="css/style.css">
+
+</head>
+
+<body>
+    <div class="container">
+
+        <header class="header">
+            <h1>🏆 <span>TOP CESTAS</span> NA COPA 2026</h1>
+            <p>A cesta certa para cada conquista!</p>
+            <div class="acoes-copa">
+                <button id="btnAtualizarCopa" class="btn-atualizar">
+                    🔄 Atualizar agora
+                </button>
+            </div>
+        </header>
+
+        <section class="card-proximo">
+            <div class="proximo-container">
+                <!-- GIF -->
+                <div class="card-gif">
+                    <img src="https://copa.topstatus.online/img/CopaTop2026.gif" alt="Copa 2026">
+                </div>
+
+                <!-- Informações -->
+                <div class="card-jogo">
+                    <h2>Próximo Jogo do Brasil</h2>
+                    <div id="infoProximo">Carregando...</div>
+                    <div class="placar">
+                        <div class="time" id="timeCasa">Brasil</div>
+                        <div class="gols" id="golCasa">0</div>
+                        <div class="versus">x</div>
+                        <div class="gols" id="golFora">0</div>
+                        <div class="time" id="timeFora">Adversário</div>
+                    </div>
+                    <div class="contador" id="contador"></div>
+                </div>
+            </div>
+        </section>
+
+        <table class="tabela">
+            <thead>
+                <tr>
+                    <th>Rodada</th>
+                    <th>Data</th>
+                    <th>Jogo</th>
+                    <th>Local</th>
+                    <th>Placar</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="tabelaJogos"></tbody>
+        </table>
+
+        <section class="grupo">
+            <h2>Progresso da Fase de Grupos</h2>
+            <div>Jogos do Brasil concluídos: <strong id="jogosConcluidos">0</strong> de 3</div>
+
+            <div class="barra">
+                <div class="progresso" id="barraProgresso">0%</div>
+            </div>
+        </section>
+
+        <section class="copa-tabela-section">
+
+            <div class="copa-header">
+                <h2>🏆 Tabela da Copa 2026</h2>
+                <span id="ultimaAtualizacao">Atualizando...</span>
+            </div>
+
+            <div id="tabelaCopa" class="grupos-copa"></div>
+
+        </section>
+
+        <footer class="footer">
+            <div>Top Cestas de Alimentos</div>
+            <div>modelo: https://ge.globo.com/futebol/copa-do-mundo/</div>
+            <div>Teste: http://localhost:3000/Copa2026.html</div>
+        </footer>
+
+    </div>
+    <script src="./js/script.js"></script>
+</body>
+</html>

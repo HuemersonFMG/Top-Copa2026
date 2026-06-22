@@ -1,0 +1,25 @@
+# Dependências
+node_modules/
+
+# Configurações locais
+.env
+
+# Cache
+cache/
+
+# Logs
+logs/
+*.log
+
+# VS Code
+.vscode/
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# PM2
+.pm2/
+
+# Arquivos temporários
+npm-debug.log*
