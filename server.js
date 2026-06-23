@@ -19,7 +19,7 @@ const LOG_ERROR = path.join(LOG_DIR, "error.log");
 const PUBLIC_DIR = path.join(__dirname, "public");
 const HTML_COPA = path.join(PUBLIC_DIR, "Copa2026.html");
 
-const TEMPO_ATUALIZACAO_API = 5 * 60 * 1000;
+const TEMPO_ATUALIZACAO_API = 1 * 60 * 1000;
 
 if (!fs.existsSync(LOG_DIR)) {
     fs.mkdirSync(LOG_DIR, { recursive: true });

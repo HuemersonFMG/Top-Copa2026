@@ -3,10 +3,12 @@ document.addEventListener("DOMContentLoaded", iniciarPagina);
 let dadosCopa = null;
 let intervaloContador = null;
 let intervaloAtualizacao = null;
+let carregandoDados = false;
+let atualizandoAgora = false;
 
 const API_HOME = "/api/copa/home";
 const API_ATUALIZAR = "/api/copa/atualizar";
-const TEMPO_ATUALIZACAO = 60000;
+const TEMPO_ATUALIZACAO = 15000;
 
 async function iniciarPagina() {
     console.log("script.js carregado com sucesso");
@@ -34,9 +36,12 @@ function configurarEventos() {
 }
 
 async function atualizarCopaAgora() {
+    if (atualizandoAgora) return;
+
     const botaoAtualizar = document.getElementById("btnAtualizarCopa");
 
     try {
+        atualizandoAgora = true;
         alterarEstadoBotao(botaoAtualizar, true, "⏳ Atualizando...");
 
         const retorno = await atualizarDadosExternos();
@@ -48,19 +53,16 @@ async function atualizarCopaAgora() {
 
         if (retorno.dados && Array.isArray(retorno.dados.grupos)) {
             dadosCopa = retorno.dados;
-
-            montarTabelaCopa(dadosCopa.grupos);
-            atualizarDataAtualizacao(dadosCopa.atualizadoEm || retorno.atualizadoEm);
-            atualizarProgressoBrasil(dadosCopa.grupos);
-            atualizarProximoJogoBrasil(dadosCopa.grupos);
+            renderizarDadosCopa(dadosCopa);
         } else {
-            await carregarDadosCopa();
+            await carregarDadosCopa(true);
         }
 
     } catch (erro) {
         console.error("Erro ao atualizar manualmente:", erro);
         alert("Não foi possível atualizar os dados agora.");
     } finally {
+        atualizandoAgora = false;
         alterarEstadoBotao(botaoAtualizar, false, "🔄 Atualizar agora");
     }
 }
@@ -92,7 +94,7 @@ function atualizacaoFoiBemSucedida(retorno) {
 }
 
 async function atualizarDadosExternos() {
-    const resposta = await fetch(API_ATUALIZAR, {
+    const resposta = await fetch(`${API_ATUALIZAR}?t=${Date.now()}`, {
         method: "POST",
         cache: "no-store",
         headers: {
@@ -117,9 +119,13 @@ async function atualizarDadosExternos() {
     return retorno;
 }
 
-async function carregarDadosCopa() {
+async function carregarDadosCopa(forcar = false) {
+    if (carregandoDados && !forcar) return;
+
     try {
-        const resposta = await fetch(API_HOME, {
+        carregandoDados = true;
+
+        const resposta = await fetch(`${API_HOME}?t=${Date.now()}`, {
             method: "GET",
             cache: "no-store",
             headers: {
@@ -146,16 +152,27 @@ async function carregarDadosCopa() {
         }
 
         dadosCopa = dados;
-
-        montarTabelaCopa(dadosCopa.grupos);
-        atualizarDataAtualizacao(dadosCopa.atualizadoEm);
-        atualizarProgressoBrasil(dadosCopa.grupos);
-        atualizarProximoJogoBrasil(dadosCopa.grupos);
+        renderizarDadosCopa(dadosCopa);
 
     } catch (erro) {
         console.error("Erro ao carregar dados:", erro);
-        exibirErroTabela("Não foi possível carregar a tabela da Copa.");
+
+        if (!dadosCopa) {
+            exibirErroTabela("Não foi possível carregar a tabela da Copa.");
+        }
+    } finally {
+        carregandoDados = false;
     }
+}
+
+function renderizarDadosCopa(dados) {
+    if (!dados || !Array.isArray(dados.grupos)) return;
+
+    montarTabelaCopa(dados.grupos);
+    atualizarDataAtualizacao(dados.atualizadoEm);
+    atualizarProgressoBrasil(dados.grupos);
+    atualizarProximoJogoBrasil(dados.grupos);
+    atualizarPainelBrasil(dados.grupos);
 }
 
 function montarTabelaCopa(grupos) {
@@ -254,25 +271,152 @@ function montarLinhaJogo(jogo) {
     `;
 }
 
-function obterPlacarJogo(jogo) {
-    const status = textoSeguro(jogo.status).toLowerCase();
+function atualizarPainelBrasil(grupos) {
+    const tbody = document.getElementById("tbodyJogosBrasil");
 
-    if (
-        status === "finalizado" ||
-        status === "encerrado" ||
-        status === "complete" ||
-        status === "finished" ||
-        status === "ft"
-    ) {
-        return `${numeroSeguro(jogo.golsCasa)} x ${numeroSeguro(jogo.golsFora)}`;
+    if (!tbody) {
+        console.warn("Elemento #tbodyJogosBrasil não encontrado no HTML.");
+        return;
     }
 
-    if (
-        jogo.golsCasa !== null &&
-        jogo.golsCasa !== undefined &&
-        jogo.golsFora !== null &&
-        jogo.golsFora !== undefined
-    ) {
+    const jogosBrasil = obterJogosBrasil(grupos);
+    ordenarJogosPorData(jogosBrasil);
+
+    tbody.innerHTML = "";
+
+    if (jogosBrasil.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="6">Nenhum jogo do Brasil encontrado.</td>
+            </tr>
+        `;
+        return;
+    }
+
+    const jogoDestaque = obterJogoDestaqueBrasil(jogosBrasil);
+
+    jogosBrasil.forEach((jogo, index) => {
+        const rodada = `${index + 1}ª`;
+        const data = montarDataHoraPainel(jogo);
+        const confronto = montarConfrontoPainel(jogo);
+        const local = textoSeguro(jogo.local || jogo.estadio || jogo.cidade || "-");
+        const placar = obterPlacarJogo(jogo);
+        const status = montarStatusPainel(jogo);
+
+        const ehDestaque = jogoDestaque && jogo.id === jogoDestaque.id;
+        const classe = ehDestaque ? "linha-jogo-atual" : "";
+
+        tbody.innerHTML += `
+            <tr class="${classe}">
+                <td>${rodada}</td>
+                <td>${data}</td>
+                <td>${confronto}</td>
+                <td>${local}</td>
+                <td><strong>${placar}</strong></td>
+                <td>${status}</td>
+            </tr>
+        `;
+    });
+}
+
+function obterJogoDestaqueBrasil(jogosBrasil) {
+    const agora = new Date();
+
+    const partidaEmAndamento = jogosBrasil.find(jogo => jogoEmAndamento(jogo));
+    if (partidaEmAndamento) return partidaEmAndamento;
+
+    const jogosNaoFinalizados = jogosBrasil
+        .filter(jogo => !jogoFinalizado(jogo))
+        .sort((a, b) => {
+            const dataA = obterDataDoJogo(a);
+            const dataB = obterDataDoJogo(b);
+
+            const tempoA = dataA ? dataA.getTime() : Number.MAX_SAFE_INTEGER;
+            const tempoB = dataB ? dataB.getTime() : Number.MAX_SAFE_INTEGER;
+
+            return tempoA - tempoB;
+        });
+
+    const proximo = jogosNaoFinalizados.find(jogo => {
+        const dataJogo = obterDataDoJogo(jogo);
+        return dataJogo && dataJogo.getTime() >= agora.getTime();
+    });
+
+    return proximo || jogosNaoFinalizados[0] || null;
+}
+
+function montarDataHoraPainel(jogo) {
+    const data = textoSeguro(jogo.data);
+    const hora = textoSeguro(jogo.hora);
+
+    if (data && hora) return `${data} ${hora}`;
+    if (data) return data;
+    if (hora) return hora;
+
+    const dataJogo = obterDataDoJogo(jogo);
+
+    if (dataJogo) {
+        return dataJogo.toLocaleString("pt-BR", {
+            day: "2-digit",
+            month: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit"
+        });
+    }
+
+    return "-";
+}
+
+function montarConfrontoPainel(jogo) {
+    return `
+        ${textoSeguro(jogo.bandeiraCasa)} ${textoSeguro(jogo.casa)}
+        x
+        ${textoSeguro(jogo.bandeiraFora)} ${textoSeguro(jogo.fora)}
+    `;
+}
+
+function montarStatusPainel(jogo) {
+    const statusOriginal = textoSeguro(jogo.status);
+    const status = statusOriginal.toLowerCase();
+
+    if (jogoEmAndamento(jogo)) {
+        return `🔴 ${statusOriginal || "Em andamento"}`;
+    }
+
+    if (jogoFinalizado(jogo)) {
+        return "✅ Finalizado";
+    }
+
+    const dataJogo = obterDataDoJogo(jogo);
+
+    if (dataJogo) {
+        const agora = new Date();
+        const hoje = agora.toLocaleDateString("pt-BR");
+        const dataTexto = dataJogo.toLocaleDateString("pt-BR");
+        const horaTexto = dataJogo.toLocaleTimeString("pt-BR", {
+            hour: "2-digit",
+            minute: "2-digit"
+        });
+
+        if (dataTexto === hoje) {
+            return `⏳ Hoje ${horaTexto}`;
+        }
+
+        return `📅 ${dataTexto} ${horaTexto}`;
+    }
+
+    if (status === "agendado" || status === "scheduled") {
+        return "⏳ Agendado";
+    }
+
+    return statusOriginal || "-";
+}
+
+function obterPlacarJogo(jogo) {
+    const golsCasaExiste = jogo.golsCasa !== null && jogo.golsCasa !== undefined && jogo.golsCasa !== "";
+    const golsForaExiste = jogo.golsFora !== null && jogo.golsFora !== undefined && jogo.golsFora !== "";
+
+    if (golsCasaExiste && golsForaExiste) {
         return `${numeroSeguro(jogo.golsCasa)} x ${numeroSeguro(jogo.golsFora)}`;
     }
 
@@ -307,10 +451,12 @@ function atualizarProgressoBrasil(grupos) {
 
     if (jogosBrasil.length === 0) {
         if (txtJogos) txtJogos.innerText = "0";
+
         if (barra) {
             barra.style.width = "0%";
             barra.innerText = "0%";
         }
+
         return;
     }
 
@@ -373,8 +519,8 @@ function atualizarProximoJogoBrasil(grupos) {
 
     if (timeCasa) timeCasa.innerText = textoSeguro(proximo.casa);
     if (timeFora) timeFora.innerText = textoSeguro(proximo.fora);
-    if (golCasa) golCasa.innerText = proximo.golsCasa ?? 0;
-    if (golFora) golFora.innerText = proximo.golsFora ?? 0;
+    if (golCasa) golCasa.innerText = numeroSeguro(proximo.golsCasa);
+    if (golFora) golFora.innerText = numeroSeguro(proximo.golsFora);
 
     iniciarContador(proximo);
 }
@@ -456,6 +602,24 @@ function ordenarJogosPorData(jogos) {
     });
 }
 
+function jogoEmAndamento(jogo) {
+    const status = textoSeguro(jogo.status).toLowerCase();
+
+    return (
+        status === "em andamento" ||
+        status === "ao vivo" ||
+        status === "live" ||
+        status === "in_play" ||
+        status === "in play" ||
+        status === "playing" ||
+        status === "1h" ||
+        status === "2h" ||
+        status === "intervalo" ||
+        status === "half_time" ||
+        status === "ht"
+    );
+}
+
 function jogoFinalizado(jogo) {
     const status = textoSeguro(jogo.status).toLowerCase();
 
@@ -463,6 +627,7 @@ function jogoFinalizado(jogo) {
         status === "finalizado" ||
         status === "encerrado" ||
         status === "complete" ||
+        status === "completed" ||
         status === "finished" ||
         status === "ft"
     );

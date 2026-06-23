@@ -1,93 +1,107 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Top Cestas - Copa 2026</title>
-<link rel="stylesheet" href="css/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Top Cestas - Copa 2026</title>
 
+    <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
     <div class="container">
 
-        <div class="acoes-copa">
-
-            <button id="btnAtualizarCopa" class="btn-top btn-atualizar">
+        <header class="acoes-copa">
+            <button id="btnAtualizarCopa" class="btn-top btn-atualizar" type="button">
                 🔄 Atualizar agora
             </button>
 
             <a href="https://copa.topstatus.online/assets/sobretopcopa2026.html"
-               class="btn-top btn-sobre" target="_blank">
+               class="btn-top btn-sobre"
+               target="_blank"
+               rel="noopener noreferrer">
                 ℹ️ Sobre o Projeto
             </a>
+        </header>
 
-        </div>
+        <main>
 
-        <section class="card-proximo">
-            <div class="proximo-container">
-                <!-- GIF -->
-                <div class="card-gif">
-                    <img src="https://copa.topstatus.online/img/CopaTop2026.gif" alt="Copa 2026">
-                </div>
+            <section class="card-proximo">
+                <div class="proximo-container">
 
-                <!-- Informações -->
-                <div class="card-jogo">
-                    <h2>Próximo Jogo do Brasil</h2>
-                    <div id="infoProximo">Carregando...</div>
-                    <div class="placar">
-                        <div class="time" id="timeCasa">Brasil</div>
-                        <div class="gols" id="golCasa">0</div>
-                        <div class="versus">x</div>
-                        <div class="gols" id="golFora">0</div>
-                        <div class="time" id="timeFora">Adversário</div>
+                    <div class="card-gif">
+                        <img src="https://copa.topstatus.online/img/CopaTop2026.gif"
+                             alt="Copa do Mundo 2026 - Top Cestas">
                     </div>
-                    <div class="contador" id="contador"></div>
+
+                    <div class="card-jogo">
+                        <h2>Próximo Jogo do Brasil</h2>
+
+                        <div id="infoProximo">Carregando...</div>
+
+                        <div class="placar">
+                            <div class="time" id="timeCasa">Brasil</div>
+                            <div class="gols" id="golCasa">0</div>
+                            <div class="versus">x</div>
+                            <div class="gols" id="golFora">0</div>
+                            <div class="time" id="timeFora">Adversário</div>
+                        </div>
+
+                        <div class="contador" id="contador"></div>
+                    </div>
+
                 </div>
-            </div>
-        </section>
+            </section>
 
-        <table class="tabela">
-            <thead>
-                <tr>
-                    <th>Rodada</th>
-                    <th>Data</th>
-                    <th>Jogo</th>
-                    <th>Local</th>
-                    <th>Placar</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody id="tabelaJogos"></tbody>
-        </table>
+            <section class="grupo">
+                <h2>🇧🇷 Campanha do Brasil</h2>
 
-        <section class="grupo">
-            <h2>Progresso da Fase de Grupos</h2>
-            <div>Jogos do Brasil concluídos: <strong id="jogosConcluidos">0</strong> de 3</div>
+                <div>Jogos do Brasil concluídos: <strong id="jogosConcluidos">0</strong> de 3</div>
 
-            <div class="barra">
-                <div class="progresso" id="barraProgresso">0%</div>
-            </div>
-        </section>
+                <div class="barra">
+                    <div class="progresso" id="barraProgresso">0%</div>
+                </div>
 
-        <section class="copa-tabela-section">
+                <div class="tabela-brasil-container">
+                    <table class="tabela">
+                        <thead>
+                            <tr>
+                                <th>Rodada</th>
+                                <th>Data</th>
+                                <th>Jogo</th>
+                                <th>Local</th>
+                                <th>Placar</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbodyJogosBrasil">
+                            <tr>
+                                <td colspan="6">Carregando jogos do Brasil...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
 
-            <div class="copa-header">
-                <h2>🏆 Tabela da Copa 2026</h2>
-                <span id="ultimaAtualizacao">Atualizando...</span>
-            </div>
+            <section class="copa-tabela-section">
+                <div class="copa-header">
+                    <h2>🏆 Tabela da Copa 2026</h2>
+                    <span id="ultimaAtualizacao">Atualizando...</span>
+                </div>
 
-            <div id="tabelaCopa" class="grupos-copa"></div>
+                <div id="tabelaCopa" class="grupos-copa"></div>
+            </section>
 
-        </section>
+        </main>
 
         <footer class="footer">
             <div>Top Cestas de Alimentos</div>
-            <div>modelo: https://ge.globo.com/futebol/copa-do-mundo/</div>
+            <div>Modelo: https://ge.globo.com/futebol/copa-do-mundo/</div>
             <div>Teste: http://localhost:3000/Copa2026.html</div>
         </footer>
 
     </div>
-    <script src="/js/script.js?v=20260622-2"></script>
+
+    <script src="/js/script.js?v=20260623-1"></script>
 </body>
 </html>

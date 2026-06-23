@@ -238,6 +238,18 @@ body{
     transition:width .4s ease;
 }
 
+/*DESTAQUE JOGO ATUAL X JOGOS BRASIL*/
+.linha-jogo-atual {
+    background: linear-gradient(90deg, #ffcc00, #ff8c00) !important;
+    color: #7a0000;
+    font-weight: bold;
+    box-shadow: inset 0 0 0 2px #ffff00;
+}
+
+.linha-jogo-atual td {
+    color: #7a0000;
+}
+
 /* TABELA COMPLETA DA COPA */
 
 .copa-tabela-section{
