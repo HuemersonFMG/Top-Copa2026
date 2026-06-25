@@ -180,7 +180,7 @@ function renderizarDadosCopa(dados) {
 
     atualizarDataAtualizacao(dados.atualizadoEm);
     atualizarProgressoBrasil(dados);
-    atualizarProximoJogoBrasil(dados);
+    atualizarPainelSuperiorBrasil(dados);
     atualizarPainelBrasil(dados);
 }
 
@@ -490,58 +490,200 @@ function atualizarProgressoBrasil(dados) {
     }
 }
 
-function atualizarProximoJogoBrasil(dados) {
+function atualizarPainelSuperiorBrasil(dados) {
     const jogosBrasil = obterJogosBrasil(dados);
+    ordenarJogosPorData(jogosBrasil);
 
+    const titulo = document.querySelector(".card-jogo h2");
+    const infoProximo = document.getElementById("infoProximo");
+    const timeCasa = document.getElementById("timeCasa");
+    const timeFora = document.getElementById("timeFora");
+    const golCasa = document.getElementById("golCasa");
+    const golFora = document.getElementById("golFora");
+    const contador = document.getElementById("contador");
+
+    if (jogosBrasil.length === 0) {
+        if (titulo) titulo.innerText = "🇧🇷 Situação do Brasil";
+        if (infoProximo) infoProximo.innerHTML = "Aguardando os jogos do Brasil serem carregados.";
+        if (timeCasa) timeCasa.innerText = "Brasil";
+        if (timeFora) timeFora.innerText = "A definir";
+        if (golCasa) golCasa.innerText = "0";
+        if (golFora) golFora.innerText = "0";
+        if (contador) contador.innerHTML = "";
+        pararContador();
+        return;
+    }
+
+    const jogoEmCurso = jogosBrasil.find(jogo => jogoEmAndamento(jogo));
+
+    if (jogoEmCurso) {
+        preencherPainelComJogoBrasil(jogoEmCurso, "🔴 Brasil em Campo", "Jogo em andamento");
+        pararContador();
+        if (contador) contador.innerHTML = "🔴 Jogo em andamento";
+        return;
+    }
+
+    const proximo = obterProximoJogoBrasil(jogosBrasil);
+
+    if (proximo) {
+        preencherPainelComJogoBrasil(proximo, "🇧🇷 Próximo Jogo do Brasil", obterRodadaBrasil(proximo, 0));
+        iniciarContador(proximo);
+        return;
+    }
+
+    const situacao = obterSituacaoBrasil(dados, jogosBrasil);
+    const ultimo = obterUltimoJogoBrasil(jogosBrasil);
+
+    preencherPainelSituacaoBrasil({
+        titulo: situacao.titulo,
+        mensagem: situacao.mensagem,
+        detalhe: situacao.detalhe,
+        jogoReferencia: ultimo
+    });
+}
+
+function preencherPainelComJogoBrasil(jogo, tituloTexto, detalheTexto) {
+    const titulo = document.querySelector(".card-jogo h2");
     const infoProximo = document.getElementById("infoProximo");
     const timeCasa = document.getElementById("timeCasa");
     const timeFora = document.getElementById("timeFora");
     const golCasa = document.getElementById("golCasa");
     const golFora = document.getElementById("golFora");
 
-    if (jogosBrasil.length === 0) {
-        if (infoProximo) infoProximo.innerHTML = "Nenhum jogo do Brasil encontrado.";
-        pararContador();
-        return;
-    }
-
-    ordenarJogosPorData(jogosBrasil);
-
-    const proximo = jogosBrasil.find(jogo => !jogoFinalizado(jogo));
-
-    if (!proximo) {
-        if (infoProximo) {
-            infoProximo.innerHTML = "Todos os jogos do Brasil foram concluídos.";
-        }
-
-        const ultimo = jogosBrasil[jogosBrasil.length - 1];
-
-        if (ultimo) {
-            if (timeCasa) timeCasa.innerText = textoSeguro(ultimo.casa);
-            if (timeFora) timeFora.innerText = textoSeguro(ultimo.fora);
-            if (golCasa) golCasa.innerText = numeroSeguro(ultimo.golsCasa);
-            if (golFora) golFora.innerText = numeroSeguro(ultimo.golsFora);
-        }
-
-        pararContador();
-        return;
-    }
+    if (titulo) titulo.innerText = tituloTexto;
 
     if (infoProximo) {
         infoProximo.innerHTML = `
-            <strong>${textoSeguro(proximo.data || montarDataHoraPainel(proximo))}</strong>
-            ${proximo.hora ? `<span class="hora-jogo">${textoSeguro(proximo.hora)}</span>` : ""}
+            <strong>${textoSeguro(detalheTexto)}</strong>
             <br>
-            ${textoSeguro(proximo.casa)} x ${textoSeguro(proximo.fora)}
+            ${textoSeguro(jogo.data || montarDataHoraPainel(jogo))}
+            ${jogo.hora ? `<span class="hora-jogo">${textoSeguro(jogo.hora)}</span>` : ""}
+            <br>
+            ${textoSeguro(jogo.casa)} x ${textoSeguro(jogo.fora)}
         `;
     }
 
-    if (timeCasa) timeCasa.innerText = textoSeguro(proximo.casa);
-    if (timeFora) timeFora.innerText = textoSeguro(proximo.fora);
-    if (golCasa) golCasa.innerText = numeroSeguro(proximo.golsCasa);
-    if (golFora) golFora.innerText = numeroSeguro(proximo.golsFora);
+    if (timeCasa) timeCasa.innerText = textoSeguro(jogo.casa);
+    if (timeFora) timeFora.innerText = textoSeguro(jogo.fora);
+    if (golCasa) golCasa.innerText = numeroSeguro(jogo.golsCasa);
+    if (golFora) golFora.innerText = numeroSeguro(jogo.golsFora);
+}
 
-    iniciarContador(proximo);
+function preencherPainelSituacaoBrasil(config) {
+    const titulo = document.querySelector(".card-jogo h2");
+    const infoProximo = document.getElementById("infoProximo");
+    const timeCasa = document.getElementById("timeCasa");
+    const timeFora = document.getElementById("timeFora");
+    const golCasa = document.getElementById("golCasa");
+    const golFora = document.getElementById("golFora");
+    const contador = document.getElementById("contador");
+
+    const jogo = config.jogoReferencia;
+
+    if (titulo) titulo.innerText = config.titulo;
+
+    if (infoProximo) {
+        infoProximo.innerHTML = `
+            <strong>${textoSeguro(config.mensagem)}</strong>
+            <br>
+            ${textoSeguro(config.detalhe)}
+        `;
+    }
+
+    if (jogo) {
+        if (timeCasa) timeCasa.innerText = textoSeguro(jogo.casa);
+        if (timeFora) timeFora.innerText = textoSeguro(jogo.fora);
+        if (golCasa) golCasa.innerText = numeroSeguro(jogo.golsCasa);
+        if (golFora) golFora.innerText = numeroSeguro(jogo.golsFora);
+    }
+
+    if (contador) contador.innerHTML = "";
+    pararContador();
+}
+
+function obterProximoJogoBrasil(jogosBrasil) {
+    const agora = new Date();
+
+    return jogosBrasil
+        .filter(jogo => !jogoFinalizado(jogo))
+        .sort((a, b) => {
+            const dataA = obterDataDoJogo(a);
+            const dataB = obterDataDoJogo(b);
+
+            const tempoA = dataA ? dataA.getTime() : Number.MAX_SAFE_INTEGER;
+            const tempoB = dataB ? dataB.getTime() : Number.MAX_SAFE_INTEGER;
+
+            return tempoA - tempoB;
+        })
+        .find(jogo => {
+            const dataJogo = obterDataDoJogo(jogo);
+            return !dataJogo || dataJogo.getTime() >= agora.getTime();
+        }) || null;
+}
+
+function obterUltimoJogoBrasil(jogosBrasil) {
+    const finalizados = jogosBrasil
+        .filter(jogo => jogoFinalizado(jogo))
+        .sort((a, b) => {
+            const dataA = obterDataDoJogo(a);
+            const dataB = obterDataDoJogo(b);
+
+            return (dataA ? dataA.getTime() : 0) - (dataB ? dataB.getTime() : 0);
+        });
+
+    return finalizados[finalizados.length - 1] || jogosBrasil[jogosBrasil.length - 1] || null;
+}
+
+function obterSituacaoBrasil(dados, jogosBrasil) {
+    const grupoBrasil = obterGrupoDoBrasil(dados);
+    const timeBrasil = grupoBrasil?.times?.find(time =>
+        textoSeguro(time.nome).toLowerCase() === "brasil"
+    );
+
+    if (timeBrasil) {
+        const posicao = Number(timeBrasil.posicao);
+        const pontos = numeroSeguro(timeBrasil.pontos);
+
+        if (posicao <= 2) {
+            return {
+                titulo: "🏆 Brasil Classificado",
+                mensagem: `Brasil classificado para o mata-mata em ${posicao}º lugar no Grupo ${textoSeguro(grupoBrasil.nome)} com ${pontos} pontos.`,
+                detalhe: "Aguardando definição oficial do próximo adversário."
+            };
+        }
+
+        if (posicao === 3) {
+            return {
+                titulo: "🇧🇷 Situação do Brasil",
+                mensagem: `Brasil terminou em 3º no Grupo ${textoSeguro(grupoBrasil.nome)}.`,
+                detalhe: "Aguardando confirmação entre os melhores terceiros colocados."
+            };
+        }
+
+        return {
+            titulo: "🇧🇷 Campanha Encerrada",
+            mensagem: `Brasil terminou em ${posicao}º no Grupo ${textoSeguro(grupoBrasil.nome)}.`,
+            detalhe: "Brasil não avançou para o mata-mata."
+        };
+    }
+
+    return {
+        titulo: "🇧🇷 Situação do Brasil",
+        mensagem: "Campanha do Brasil carregada.",
+        detalhe: "Aguardando próxima atualização da API."
+    };
+}
+
+function obterGrupoDoBrasil(dados) {
+    const grupos = Array.isArray(dados?.grupos) ? dados.grupos : [];
+
+    return grupos.find(grupo => {
+        const times = Array.isArray(grupo.times) ? grupo.times : [];
+
+        return times.some(time =>
+            textoSeguro(time.nome).toLowerCase() === "brasil"
+        );
+    }) || null;
 }
 
 function iniciarContador(jogo) {
