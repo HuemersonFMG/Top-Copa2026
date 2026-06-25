@@ -20,21 +20,32 @@ const PUBLIC_DIR = path.join(__dirname, "public");
 const HTML_COPA = path.join(PUBLIC_DIR, "Copa2026.html");
 
 const TEMPO_ATUALIZACAO_API = 1 * 60 * 1000;
+let atualizacaoEmAndamento = false;
 
 if (!fs.existsSync(LOG_DIR)) {
     fs.mkdirSync(LOG_DIR, { recursive: true });
 }
 
 app.use(cors());
-app.use(express.json({ limit: "2mb" }));
-app.use(express.urlencoded({ extended: true }));
+
+app.use(express.json({
+    limit: "2mb"
+}));
+
+app.use(express.urlencoded({
+    extended: true
+}));
+
+function agoraBR() {
+    return new Date().toLocaleString("pt-BR");
+}
 
 function gravarLog(arquivo, mensagem) {
-    const linha = `[${new Date().toLocaleString("pt-BR")}] ${mensagem}\n`;
+    const linha = `[${agoraBR()}] ${mensagem}\n`;
 
-    fs.appendFile(arquivo, linha, err => {
-        if (err) {
-            console.error("Erro ao gravar log:", err.message);
+    fs.appendFile(arquivo, linha, erro => {
+        if (erro) {
+            console.error("Erro ao gravar log:", erro.message);
         }
     });
 }
@@ -44,7 +55,19 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use(express.static(PUBLIC_DIR));
+app.use(express.static(PUBLIC_DIR, {
+    etag: false,
+    maxAge: 0,
+    setHeaders: (res, filePath) => {
+        if (filePath.endsWith(".html")) {
+            res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+        }
+
+        if (filePath.endsWith(".js") || filePath.endsWith(".css")) {
+            res.setHeader("Cache-Control", "no-cache");
+        }
+    }
+}));
 
 app.get("/", (req, res) => {
     res.sendFile(HTML_COPA);
@@ -61,27 +84,38 @@ app.get("/api/status", (req, res) => {
         online: true,
         projeto: "Site Copa 2026 - Top Cestas",
         porta: PORT,
-        dataHora: new Date().toLocaleString("pt-BR")
+        atualizacaoAutomaticaMinutos: TEMPO_ATUALIZACAO_API / 60000,
+        dataHora: agoraBR()
     });
 });
 
 async function atualizarCopaAutomaticamente() {
+    if (atualizacaoEmAndamento) {
+        console.log(`[${agoraBR()}] Atualização ignorada: já existe uma atualização em andamento.`);
+        return;
+    }
+
     try {
-        console.log(`[${new Date().toLocaleString("pt-BR")}] Atualizando dados da Copa...`);
+        atualizacaoEmAndamento = true;
+
+        console.log(`[${agoraBR()}] Atualizando dados da Copa...`);
 
         const dados = await atualizarDadosDaCopa();
 
+        const totalGrupos = Array.isArray(dados?.grupos) ? dados.grupos.length : 0;
+        const totalMataMata = Array.isArray(dados?.mataMata) ? dados.mataMata.length : 0;
+
         console.log(
-            `[${new Date().toLocaleString("pt-BR")}] Copa atualizada com sucesso. Grupos: ${
-                Array.isArray(dados.grupos) ? dados.grupos.length : 0
-            }`
+            `[${agoraBR()}] Copa atualizada com sucesso. Grupos: ${totalGrupos} | Mata-mata: ${totalMataMata}`
         );
 
     } catch (erro) {
         const mensagem = `Falha na atualização automática da Copa: ${erro.message}`;
 
-        console.error(`[${new Date().toLocaleString("pt-BR")}] ${mensagem}`);
+        console.error(`[${agoraBR()}] ${mensagem}`);
         gravarLog(LOG_ERROR, mensagem);
+    } finally {
+        atualizacaoEmAndamento = false;
     }
 }
 
